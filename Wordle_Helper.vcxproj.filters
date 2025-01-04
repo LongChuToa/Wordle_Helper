@@ -27,6 +27,9 @@
     <ClInclude Include="header\base_game\base_game.h">
       <Filter>Header Files\base_game</Filter>
     </ClInclude>
+    <ClInclude Include="header\base_game\support.h">
+      <Filter>Header Files\base_game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -10,31 +10,6 @@ using namespace std;
 class Word_List
 {
 public:
-	//SUPPORT CLASS
-	class Word
-	{
-	public:
-		Word() { word = new vector<string>[26]; }
-
-		void add_word(char _word, string words) {
-			int idx = _word - 'a';
-			this->word[idx].push_back(words);
-		}
-		vector<string> get(char _word) {
-			return word[int(_word - 'a')];
-		}
-		vector<string> get(int _word_idx) {
-			return word[_word_idx];
-		}
-		void clear() {
-			delete[] word;
-		}
-	private:
-		vector<string>* word;
-	};
-
-
-
 	//MAIN FUNCTION
 	Word_List() = default;
 	Word_List(string filename);
@@ -44,6 +19,33 @@ public:
 private:
 	Word* word_idx;
 };
+
+//SUPPORT CLASS
+class Word
+{
+public:
+	Word() { word = new vector<string>[26]; }
+
+	void add_word(char _word, string words) {
+		int idx = _word - 'a';
+		this->word[idx].push_back(words);
+	}
+	vector<string> get(char _word) {
+		return word[int(_word - 'a')];
+	}
+	vector<string> get(int _word_idx) {
+		return word[_word_idx];
+	}
+	void clear() {
+		delete[] word;
+	}
+private:
+	vector<string>* word;
+};
+
+//////////////////////////////////////
+//         BEGIN DEFINITION			//
+//////////////////////////////////////
 
 //MAIN FUNCTION
 Word_List::Word_List(string filename)
@@ -78,6 +80,9 @@ inline void Word_List::allclear()
 }
 
 
+//////////////////////////////////////
+//         END DEFINITION			//
+//////////////////////////////////////
 
 
 #endif // ! WORD_LIST
