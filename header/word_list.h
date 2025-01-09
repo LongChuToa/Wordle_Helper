@@ -7,6 +7,7 @@
 #include <string>
 using namespace std;
 
+class Word;				//Forward declaration
 class Word_List
 {
 public:
