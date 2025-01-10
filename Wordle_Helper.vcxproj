@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="header\all_header.h" />
     <ClInclude Include="header\base_game\base_game.h" />
     <ClInclude Include="header\base_game\support.h" />
     <ClInclude Include="header\word_list.h" />

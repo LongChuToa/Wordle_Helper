@@ -17,6 +17,7 @@ public:
 	void vector_concat(vec_s& a, vec_s b);
 	void vector_filter(vec_s& a, vec_s b, bool positive = true);
 	void vector_erase(vec_s& vec, const function<bool(const string&)>& condition);
+	void vector_erase(vec_s& vec, string del);
 	vec_s vector_merge(vec_s* vec_list);
 
 	// MAIN FUNCTION
@@ -59,6 +60,16 @@ inline void Support::vector_erase(vec_s& vec, const function<bool(const string&)
 		if (condition(vec[j])) {
 			vec.erase(vec.begin() + j);
 			j--;
+		}
+	}
+}
+
+inline void Support::vector_erase(vec_s& vec, string del)
+{
+	for (int i = 0; i < vec.size(); i++) {
+		if (del == vec[i]) {
+			vec.erase(vec.begin() + i);
+			break;
 		}
 	}
 }
@@ -179,6 +190,7 @@ inline void Support::add(string guess, vec_i word)
 				});
 		}
 	}
+	vector_erase(sup_list, guess);
 }
 
 inline void Support::print()

@@ -3,8 +3,8 @@
 
 #include "word_list.h"
 #include "support.h"
-#include <cstdlib>
 #include <stdlib.h>
+#include <cstdlib>
 
 #define red "\033[31m"
 #define reset "\033[0m"
@@ -23,22 +23,26 @@ public:
 	//PLAY FUNCTION
 	void game_working(string _word);
 	void play_with_random_word(int seed, bool support_mode = false);
-	void play_with_custom_word(string custom, bool support_mode = false);
-	void play_with_choice_word(string choice);
+	void play_with_choice_word(string choice, bool support_mode = false);
+	void play_with_custom_word(string custom);
 
 	//OTHER SUPPORT FUNCTION
-	bool valid_word(string& _word);
+	bool valid_word(string& _word, int size = 5);
 private:
 	Word_List word_list;
 	Support sup;
-	bool support_mode = false;
+	vector <string> guessed;
+	bool support_mode = false, custom_mode = false;
 };
 
 /////////////////GUESS CLASS/////////////////
 class Guesses
 {
 public:
-	Guesses(string word) : finish_word(word) {}
+	Guesses(string word) : finish_word(word) {
+		last_guess = vector<int>(word.size(), RED);
+		is_colored = vector<bool>(word.size(), false);
+	}
 
 	/*
 	* Guess the word:
@@ -50,7 +54,7 @@ public:
 	*/
 	void guess(string _word) {
 		cout << "Result: ";
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < _word.size(); i++) {
 			char word = _word[i];
 			last_guess[i] = RED;		//Reset color here
 			if (word == finish_word[i]) {
@@ -58,7 +62,7 @@ public:
 				is_colored[i] = true;
 			}
 			else {
-				for (int j = 0; j < 5; j++) {
+				for (int j = 0; j < _word.size(); j++) {
 					if (word == finish_word[j] && !is_colored[j]) {
 						last_guess[i] = YELLOW;
 						is_colored[j] = true;
@@ -89,7 +93,7 @@ public:
 		}
 	}
 	void colored_reset() {
-		is_colored.assign(5, false);
+		is_colored.assign(finish_word.size(), false);
 	}
 	vector<int> info() {
 		return last_guess;
@@ -98,8 +102,8 @@ private:
 	friend class Base_Game;
 	int count = 6;
 	string finish_word;
-	vector <int> last_guess = vector<int>(5, RED);
-	vector <bool> is_colored = vector<bool>(5, false);
+	vector <int> last_guess;
+	vector <bool> is_colored;
 	bool winner = false;
 };
 
@@ -128,11 +132,12 @@ inline void Base_Game::game_working(string _word)
 		while (!pass) {		//Check the word if size = 5 && it is valid
 			cout << "\nGuesses number " << 7 - guess.count << " : ";
 			cin >> guess_word;
-			pass = valid_word(guess_word);
+			pass = valid_word(guess_word, _word.size());
 			if (!pass) {
 				cout << "Word is invalid!!\n";
 			}
 		}
+		guessed.push_back(guess_word);
 		guess.guess(guess_word);
 		if (guess.winner) break;
 		else if (support_mode) {
@@ -173,37 +178,52 @@ inline void Base_Game::play_with_random_word(int seed, bool support_mode)
 	game_working(word[random_word_idx]);
 }
 
-inline void Base_Game::play_with_custom_word(string custom, bool support_mode)
+inline void Base_Game::play_with_choice_word(string choice, bool support_mode)
 {
 	this->support_mode = support_mode;
-	game_working(custom);
+	game_working(choice);
 }
 
-inline void Base_Game::play_with_choice_word(string choice)
+inline void Base_Game::play_with_custom_word(string custom)
 {
-
+	custom_mode = true;
+	cout << "Word size is " << custom.size() << endl;
+	game_working(custom);
 }
 
 /* What valid_word doing?
 * 1. It checks if the word have not existed in word list
 * 2. It will make UPPERCASE word become lowercase word
 * 3. It also prevent any not-5-length-word
+* 4. And last it will reject any guessed word before.
 */
-inline bool Base_Game::valid_word(string& _word)
+inline bool Base_Game::valid_word(string& _word, int size)
 {
-	if (_word.size() != 5) return false;
-	for (int i = 0; i < 5; i++) {
+	//Prevent any n-length word		
+	if (_word.size() != size) return false;
+	//Transform UPPERCASE to lowercase
+	for (int i = 0; i < _word.size(); i++) {			
 		if (65 <= _word[i] && _word[i] <= 90) {
 			_word[i] += 32;
 		}
+		if (_word[i] < 65 || _word[i] > 122) return false;	
 	}
-	auto word_finder = word_list.get_list(0, _word[0] - 'a');
-	for (string w : word_finder) {
-		if (w == _word) {
-			return true;
+	// Find word that existed before in any last guessed 
+	// and not existed in word list
+	if (!custom_mode) {
+		auto word_finder = word_list.get_list(0, _word[0] - 'a');
+		for (string w : guessed) {				
+			if (w == _word) {
+				return false;
+			}
+		}
+		for (string w : word_finder) {		
+			if (w == _word) {
+				return true;
+			}
 		}
 	}
-	return false;
+	return custom_mode;
 }
 
 //////////////////////////////////////

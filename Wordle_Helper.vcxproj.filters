@@ -21,9 +21,6 @@
     <ClInclude Include="header\word_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\all_header.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\base_game\base_game.h">
       <Filter>Header Files\base_game</Filter>
     </ClInclude>
